@@ -4,21 +4,21 @@
 *Preprint, echo=NO, model=NO, history=NO, contact=NO
 **
 *PARAMETER
-Density1                            = 2.400000e+03
-NormalModulus1                      = 3.000000e+10
+Density1                            = 2.400000e-09
+NormalModulus1                      = 3.000000e+04
 Alpha1                              = 2.000000e-01
-TensileStrength1                    = 3.000000e+06
-TensileCharacteristicLength1        = 2.500000e-01
+TensileStrength1                    = 3.000000e+00
+TensileCharacteristicLength1        = 2.500000e+02
 ShearStrengthRatio1                 = 2.500000e+00
 SofteningExponent1                  = 2.000000e-01
-CompressiveYieldingStrength1        = 1.200000e+08
+CompressiveYieldingStrength1        = 1.200000e+02
 InitialHardeningModulusRatio1       = 3.300000e-01
 TransitionalStrainRatio1            = 3.000000e+00
 DeviatoricStrainThresholdRatio1     = 5.000000e-01
 DeviatoricDamageParameter1          = 5.000000e+00
 InitialFriction1                    = 4.000000e-01
 AsymptoticFriction1                 = 0.000000e+00
-TransitionalStress1                 = 6.000000e+08
+TransitionalStress1                 = 6.000000e+02
 DensificationRatio1                 = 1.000000e+00
 VolumetricDeviatoricCoupling1       = 0.000000e+00
 TensileUnloading1               =0.0
@@ -96,12 +96,12 @@ NumberOfUserElement                = 1
 *USER ELEMENT, NODES=4, TYPE=VU4, COORDINATES=3, variables=300, PROPERTIES=69, I PROPERTIES=1, INTEGRATION=3 
 1, 2, 3, 4, 5, 6 				 
 *Node
-      1, 0.00100000005,           0., -0.000707106781
-      2, -0.00100000005,           0., -0.000707106781
-      3,           0., 0.00100000005, 0.000707106781
-      4,           0., -0.00100000005, 0.000707106781
+      1, 0.,           0., 0.
+      2, 1.,           0., 0.
+      3, 0.5, 0.8660254038, 0.
+      4, 0.5, 0.2886751346, 0.8164965809
 *Element, type=VU4,elset=AllEls
-1, 4, 3, 2, 1
+1, 1, 2, 3, 4
 *UEL PROPERTY, ELSET=AllEls 
 <Density1>, <NormalModulus1>, <Alpha1>, <TensileStrength1>, <TensileCharacteristicLength1>, <ShearStrengthRatio1>, <SofteningExponent1>, <CompressiveYieldingStrength1>,
 <InitialHardeningModulusRatio1>, <TransitionalStrainRatio1>, <DeviatoricStrainThresholdRatio1>, <DeviatoricDamageParameter1>, <InitialFriction1>, <AsymptoticFriction1>, <TransitionalStress1>, <DensificationRatio1>,
@@ -130,11 +130,11 @@ NumberOfUserElement                = 1
  3,
 *Nset, nset=node4, instance=PART-1-1
  4,
-*Nset, nset=_PickedSet5, internal, instance=PART-1-1, generate
- 1,  3,  1
+*Nset, nset=_PickedSet5, internal, instance=PART-1-1
+ 1, 2, 3,
 *End Assembly
 *Amplitude, name=Amp-1, time=TOTAL TIME
-             0.,              0.,             0.2,           2e-05,             2.4,         -0.0002,             4.6,           2e-05
+             0.,              0.,             0.2,           0.02,             2.4,         -0.2,             4.6,           0.02
             4.8,              0.
 ** ----------------------------------------------------------------
 ** 
@@ -173,7 +173,7 @@ _PickedSet5, 6, 6
 ** 
 ** FIELD OUTPUT: F-Output-2
 ** 
-*Output, field, number interval=480
+*Output, field, number interval=4800
 *Node Output, nset=node1
 RF, RM, RT, UT
 ** 
