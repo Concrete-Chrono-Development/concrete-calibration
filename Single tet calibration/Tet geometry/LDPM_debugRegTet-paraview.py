@@ -4,9 +4,9 @@ from paraview.simple import *
 #### disable automatic camera reset on 'Show'
 paraview.simple._DisableFirstRenderCameraReset()
         
-lDPMgeo000paraTet000vtk = LegacyVTKReader(registrationName='LDPM_debugRegTet-para-mesh.000.vtk', FileNames=['C:\\Users\\24445\\chronoWorkbench\\LDPM_debugRegTetBox000\\LDPM_debugRegTet-para-mesh.000.vtk'])
-lDPMgeo000paraTetFacets000vtk = LegacyVTKReader(registrationName='LDPM_debugRegTet-para-facets.000.vtk', FileNames=['C:\\Users\\24445\\chronoWorkbench\\LDPM_debugRegTetBox000\\LDPM_debugRegTet-para-facets.000.vtk'])
-lDPMgeo000paraTetParticles000vtk = LegacyVTKReader(registrationName='LDPM_debugRegTet-para-particles.000.vtk', FileNames=['C:\\Users\\24445\\chronoWorkbench\\LDPM_debugRegTetBox000\\LDPM_debugRegTet-para-particles.000.vtk'])
+lDPMgeo000paraTet000vtk = LegacyVTKReader(registrationName='LDPM_debugRegTet-para-mesh.000.vtk', FileNames=['C:\\Users\\24445\\chronoWorkbench\\LDPM_debugRegTetBox002\\LDPM_debugRegTet-para-mesh.000.vtk'])
+lDPMgeo000paraTetFacets000vtk = LegacyVTKReader(registrationName='LDPM_debugRegTet-para-facets.000.vtk', FileNames=['C:\\Users\\24445\\chronoWorkbench\\LDPM_debugRegTetBox002\\LDPM_debugRegTet-para-facets.000.vtk'])
+lDPMgeo000paraTetParticles000vtk = LegacyVTKReader(registrationName='LDPM_debugRegTet-para-particles.000.vtk', FileNames=['C:\\Users\\24445\\chronoWorkbench\\LDPM_debugRegTetBox002\\LDPM_debugRegTet-para-particles.000.vtk'])
 
 # get active view
 renderView1 = GetActiveViewOrCreate('RenderView')
