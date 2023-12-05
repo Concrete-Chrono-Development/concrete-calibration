@@ -4,21 +4,21 @@
 *Preprint, echo=NO, model=NO, history=NO, contact=NO
 **
 *PARAMETER
-Density1                            = 2.400000e+03
-NormalModulus1                      = 3.000000e+10
+Density1                            = 2.400000e-09
+NormalModulus1                      = 3.000000e+04
 Alpha1                              = 2.000000e-01
-TensileStrength1                    = 3.000000e+06
-TensileCharacteristicLength1        = 2.500000e-01
+TensileStrength1                    = 3.000000e+00
+TensileCharacteristicLength1        = 2.500000e+02
 ShearStrengthRatio1                 = 2.500000e+00
 SofteningExponent1                  = 2.000000e-01
-CompressiveYieldingStrength1        = 1.200000e+08
+CompressiveYieldingStrength1        = 1.200000e+02
 InitialHardeningModulusRatio1       = 3.300000e-01
 TransitionalStrainRatio1            = 3.000000e+00
 DeviatoricStrainThresholdRatio1     = 5.000000e-01
 DeviatoricDamageParameter1          = 5.000000e+00
 InitialFriction1                    = 4.000000e-01
 AsymptoticFriction1                 = 0.000000e+00
-TransitionalStress1                 = 6.000000e+08
+TransitionalStress1                 = 6.000000e+02
 DensificationRatio1                 = 1.000000e+00
 VolumetricDeviatoricCoupling1       = 0.000000e+00
 TensileUnloading1               =0.0
@@ -175,22 +175,22 @@ _PickedSet5, 6, 6
 ** 
 *Output, field, number interval=3000
 *Node Output, nset=node1
-RF, RM, RT, UT
+RF, RM, RT, UT, UR
 ** 
 ** FIELD OUTPUT: F-Output-3
 ** 
 *Node Output, nset=node2
-RF, RM, RT, UT
+RF, RM, RT, UT, UR
 ** 
 ** FIELD OUTPUT: F-Output-4
 ** 
 *Node Output, nset=node3
-RF, RM, RT, UT
+RF, RM, RT, UT, UR
 ** 
 ** FIELD OUTPUT: F-Output-5
 ** 
 *Node Output, nset=node4
-RF, RM, RT, UT
+RF, RM, RT, UT, UR
 ** 
 ** HISTORY OUTPUT: H-Output-1
 ** 
