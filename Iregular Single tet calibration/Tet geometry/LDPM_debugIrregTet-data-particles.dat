@@ -1,0 +1,11 @@
+# Particle Data Generated with LDPM Mesh Generation Tool
+# [n x y z d]
+# Note: Node numbers are zero-indexed
+
+# Number of Nodes: 4
+# Number of Aggregates: 4
+0 1.0 0.0 0.0 0.6
+1 2.0 1.5 3.0 0.9
+2 -1.0 0.5 0.0 1.0
+3 0.5 2.0 1.0 1.2
+
