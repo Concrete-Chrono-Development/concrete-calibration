@@ -1,0 +1,51 @@
+====================================================================================================
+FE - MultiPhys - Finite element program for multi-physics computation of continua and structures    
+  
+ Version 2024.5.9   - May 20, 2024      
+  
+ Created by I. Koutromanos and M. Farhadi,
+ Virginia Polytechnic Institute and State University
+ Copyright 2018
+  
+ Please report bugs & other issues @ ikoutrom@vt.edu
+  
+  
+*** SOLID MECHANICS COMPUTATION ***                                                                 
+------------------------------------                                                                
+  
+ * Eigenvalue (Modal) Computation  *
+  
+====================================================================================================
+  
+  
+  *** MODAL SOLVER ***
+  Calculation of Eigenvalues and Eigenvectors
+  using Kim-Bathe Enriched Subspace Iteration Method
+  
+  
+ ***    INFORMATION FOR REQUESTED MODES    ***
+     Mode Number     Frequency (Hz)    Period (sec)       Meff-X   Meff-Y  Meff-Z                   
+         1            0.1384848E+04    0.7221007E-03       0.440   0.186   0.000
+         2            0.1388684E+04    0.7201060E-03       0.186   0.440   0.000
+         3            0.2978386E+04    0.3357524E-03       0.000   0.000   0.000
+         4            0.4963014E+04    0.2014904E-03       0.000   0.000   0.819
+         5            0.5342828E+04    0.1871668E-03       0.107   0.126   0.000
+         6            0.5375344E+04    0.1860346E-03       0.125   0.106   0.001
+         7            0.8907212E+04    0.1122686E-03       0.000   0.000   0.000
+         8            0.1121889E+05    0.8913534E-04       0.010   0.048   0.000
+         9            0.1122888E+05    0.8905605E-04       0.048   0.010   0.000
+        10            0.1351095E+05    0.7401404E-04       0.000   0.000   0.000
+        11            0.1450663E+05    0.6893399E-04       0.002   0.014   0.000
+        12            0.1452843E+05    0.6883058E-04       0.014   0.002   0.000
+        13            0.1456133E+05    0.6867502E-04       0.000   0.000   0.086
+        14            0.1469962E+05    0.6802895E-04       0.000   0.000   0.000
+        15            0.1617431E+05    0.6182643E-04       0.000   0.000   0.000
+        16            0.1622739E+05    0.6162422E-04       0.000   0.000   0.000
+        17            0.1637967E+05    0.6105129E-04       0.000   0.000   0.000
+        18            0.1648703E+05    0.6065372E-04       0.000   0.000   0.000
+        19            0.1780148E+05    0.5617511E-04       0.000   0.002   0.000
+        20            0.1787937E+05    0.5593038E-04       0.002   0.000   0.000
+  
+ *** N o r m a l   P r o g r a m    T e r m i n a t i o n *** 
+  
+ Total Analysis Time =   17.2343750000000      seconds
