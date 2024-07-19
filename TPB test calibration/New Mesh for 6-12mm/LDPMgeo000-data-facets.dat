@@ -1,0 +1,21 @@
+// ================================================================================
+// CHRONO WORKBENCH - github.com/Concrete-Chrono-Development/chrono-preprocessor
+//
+// Copyright (c) 2023 
+// All rights reserved. 
+//
+// Use of the code that generated this file is governed by a BSD-style license that
+// can be found in the LICENSE file at the top level of the distribution and at
+// github.com/Concrete-Chrono-Development/chrono-preprocessor/blob/main/LICENSE
+//
+// ================================================================================
+// Facet Data File
+// ================================================================================
+//
+// Data Structure:
+// Tet IDx IDy IDz Vol pArea cx cy cz px py pz qx qy qz sx sy sz mF
+// One line per facet, ordering is Tet 1 (Facet 1-12),...,Tet N (Facet 1-12)
+// Note: All indices are zero-indexed
+//
+// ================================================================================
+0 0 1 2 13.54541267 3.428890977 98.426944 8.658968912 141.5106375 0 0.0653605682 0.9978617119 -0.1594642418 0.9850927793 -0.0645241951 -0.9872037052 -0.1591232614 0.01042267345 0
