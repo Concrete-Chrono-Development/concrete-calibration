@@ -1,0 +1,19 @@
+#VTKRCExporter faces saveEvery   0.02 celglob_responseata 1 volumetric_strain
+#VTKElementExporter	elems	saveEvery	0.02    celglob_responseata 1 strain stress tempCrackOpening pointData 2 displacements rotations extrapolatedNodeData 2 stress strain
+
+DoFGauge glob_response u[m]	uz	1   327549
+ForceGauge glob_response load[N] fz 1  327549
+ForceGauge glob_response reaction[N] fz 1  327550
+
+SolverGauge glob_response Wint[J] IntEnergyMech
+SolverGauge glob_response Wext[J] ExtEnergyMech
+SolverGauge glob_response Wkin[J] KinEnergyMech
+
+SolverGauge solver iterations iterations
+SolverGauge solver restars restars
+SolverGauge solver error_displacements error_dofs
+SolverGauge solver error_residuals error_residuals
+SolverGauge solver error_energy error_energy
+SolverGauge solver converged converged
+SolverGauge solver elapsed_time elapsed_time
+

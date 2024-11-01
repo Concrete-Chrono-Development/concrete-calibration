@@ -1,0 +1,99 @@
+# VTKRCExporter faces saveEvery pointData 1   displacements  celglob_responseata 1 tempCrackOpening
+#VTKElementExporter	elems	saveEvery 0.0001	  celglob_responseata 1 strain stress tempCrackOpening pointData 2 displacements rotations extrapolatedNodeData 2 stress strain
+
+DoFGauge glob_response u[m]	ux	1   457465
+ForceGauge glob_response load[N] fx 1  457465
+
+SolverGauge glob_response Wint[J] IntEnergyMech
+SolverGauge glob_response Wext[J] ExtEnergyMech
+SolverGauge glob_response Wkin[J] KinEnergyMech
+
+DoFGauge glob_response ux[m]_node0	ux	1   879
+DoFGauge glob_response uy[m]_node0	uy	1   879
+DoFGauge glob_response uz[m]_node0	uz	1   879
+DoFGauge glob_response rotx[N]_node0 rx 1  879
+DoFGauge glob_response roty[N]_node0 ry 1  879
+DoFGauge glob_response rotz[N]_node0 rz 1  879
+
+DoFGauge glob_response ux[m]_node1	ux	1   1404
+DoFGauge glob_response uy[m]_node1	uy	1   1404
+DoFGauge glob_response uz[m]_node1	uz	1   1404
+DoFGauge glob_response rotx[N]_node1 rx 1  1404
+DoFGauge glob_response roty[N]_node1 ry 1  1404
+DoFGauge glob_response rotz[N]_node1 rz 1  1404
+
+DoFGauge glob_response ux[m]_node2	ux	1   1106
+DoFGauge glob_response uy[m]_node2	uy	1   1106
+DoFGauge glob_response uz[m]_node2	uz	1   1106
+DoFGauge glob_response rotx[N]_node2 rx 1  1106
+DoFGauge glob_response roty[N]_node2 ry 1  1106
+DoFGauge glob_response rotz[N]_node2 rz 1  1106
+
+DoFGauge glob_response ux[m]_node3	ux	1   2125
+DoFGauge glob_response uy[m]_node3	uy	1   2125
+DoFGauge glob_response uz[m]_node3	uz	1   2125
+DoFGauge glob_response rotx[N]_node3 rx 1  2125
+DoFGauge glob_response roty[N]_node3 ry 1  2125
+DoFGauge glob_response rotz[N]_node3 rz 1  2125
+
+DoFGauge glob_response ux[m]_node4	ux	1   2127
+DoFGauge glob_response uy[m]_node4	uy	1   2127
+DoFGauge glob_response uz[m]_node4	uz	1   2127
+DoFGauge glob_response rotx[N]_node4 rx 1  2127
+DoFGauge glob_response roty[N]_node4 ry 1  2127
+DoFGauge glob_response rotz[N]_node4 rz 1  2127
+
+DoFGauge glob_response ux[m]_node5	ux	1   2182
+DoFGauge glob_response uy[m]_node5	uy	1   2182
+DoFGauge glob_response uz[m]_node5	uz	1   2182
+DoFGauge glob_response rotx[N]_node5 rx 1  2182
+DoFGauge glob_response roty[N]_node5 ry 1  2182
+DoFGauge glob_response rotz[N]_node5 rz 1  2182
+
+DoFGauge glob_response ux[m]_node6	ux	1   2117
+DoFGauge glob_response uy[m]_node6	uy	1   2117
+DoFGauge glob_response uz[m]_node6	uz	1   2117
+DoFGauge glob_response rotx[N]_node6 rx 1  2117
+DoFGauge glob_response roty[N]_node6 ry 1  2117
+DoFGauge glob_response rotz[N]_node6 rz 1  2117
+
+DoFGauge glob_response ux[m]_node7	ux	1   2438
+DoFGauge glob_response uy[m]_node7	uy	1   2438
+DoFGauge glob_response uz[m]_node7	uz	1   2438
+DoFGauge glob_response rotx[N]_node7 rx 1  2438
+DoFGauge glob_response roty[N]_node7 ry 1  2438
+DoFGauge glob_response rotz[N]_node7 rz 1  2438
+
+DoFGauge glob_response ux[m]_node8	ux	1   1720
+DoFGauge glob_response uy[m]_node8	uy	1   1720
+DoFGauge glob_response uz[m]_node8	uz	1   1720
+DoFGauge glob_response rotx[N]_node8 rx 1  1720
+DoFGauge glob_response roty[N]_node8 ry 1  1720
+DoFGauge glob_response rotz[N]_node8 rz 1  1720
+
+DoFGauge glob_response ux[m]_node9	ux	1   2288
+DoFGauge glob_response uy[m]_node9	uy	1   2288
+DoFGauge glob_response uz[m]_node9	uz	1   2288
+DoFGauge glob_response rotx[N]_node9 rx 1  2288
+DoFGauge glob_response roty[N]_node9 ry 1  2288
+DoFGauge glob_response rotz[N]_node9 rz 1  2288
+
+DoFGauge glob_response ux[m]_node10	ux	1   987
+DoFGauge glob_response uy[m]_node10	uy	1   987
+DoFGauge glob_response uz[m]_node10	uz	1   987
+DoFGauge glob_response rotx_node10	rx	1   987
+DoFGauge glob_response roty_node10	ry	1   987
+DoFGauge glob_response rotz_node10	rz	1   987
+
+ForceGauge glob_response loadx[N]_node10 fx 1  987
+ForceGauge glob_response loady[N]_node10 fy 1  987
+ForceGauge glob_response loadz[N]_node10 fz 1  987
+
+SolverGauge solver iterations iterations
+SolverGauge solver restars restars
+SolverGauge solver error_displacements error_dofs
+SolverGauge solver error_residuals error_residuals
+SolverGauge solver error_energy error_energy
+SolverGauge solver converged converged
+SolverGauge solver elapsed_time elapsed_time
+

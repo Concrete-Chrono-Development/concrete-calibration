@@ -1,0 +1,3 @@
+#ConstraintType	GovNodeIdx	Xmin	Xmax	Ymin	Ymax	Zmin	Zmax
+#CoordRigidPlate	457466	-0.001  0.101   -0.001  0.101    0.199  0.201   dirs	6	1   1	1	1	1	1   # top plate
+CoordRigidPlate	457465	-0.001  0.101   -0.001  0.101   -0.001  0.001   dirs	6	1   1	1	1	1	1   # bottom plate

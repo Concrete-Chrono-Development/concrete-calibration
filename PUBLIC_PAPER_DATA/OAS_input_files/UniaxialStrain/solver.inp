@@ -1,0 +1,9 @@
+TransientNonLinearMechanicalSolver
+time_step	5.000000e-04
+total_time	2.000000e-01
+limit_tolerance	1.000000e-01
+tolerance	1.000000e-04
+maxIt	100
+solver_type EigenLDLT # EigenSparseLU
+stiffness_matrix_update -1
+spectral_radius 8.000000e-01

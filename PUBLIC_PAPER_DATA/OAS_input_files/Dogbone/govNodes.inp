@@ -1,0 +1,3 @@
+# Type	nodeCrdX	nodeCrdY	nodeCrdZ
+MechDoF 0.075	0.025	0.0 6   # bottom center
+MechDoF 0.075	0.025	0.15 6  # top center

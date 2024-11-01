@@ -1,0 +1,22 @@
+DoFGauge glob_response deflection[m]	uz	1   479740
+DisplacementGauge glob_response CMOD[m]	ux	0.049	0.05	0	0.051	0.05	0 
+ForceGauge glob_response load fz 1  479740   
+ForceGauge glob_response reactionA[N] fz 1  479741   
+ForceGauge glob_response reactionB[N] fz 1  479742
+DoFGauge glob_response displA[m]	ux	1   479741
+DoFGauge glob_response displB[m]	ux	1   479742   
+SolverGauge glob_response Wint[J] IntEnergyMech
+SolverGauge glob_response Wext[J] ExtEnergyMech
+SolverGauge glob_response Wkin[J] KinEnergyMech
+SolverGauge solver iterations iterations
+SolverGauge solver restars restars
+SolverGauge solver error_displacements error_dofs
+SolverGauge solver error_residuals error_residuals
+SolverGauge solver error_energy error_energy
+SolverGauge solver converged converged
+SolverGauge solver elapsed_time elapsed_time
+
+#VTKElementExporter	elems	saveTimes 4 0.006 0.016 0.026 0.036	celglob_responseata 4 strain stress damage tempCrackOpening pointData 2 displacements rotations extrapolatedNodeData 2 stress strain
+#VTKRCExporter faces  saveTimes 4 0.006 0.016 0.026 0.036 celglob_responseata 1 tempCrackOpening
+# VTKElementExporter	elems	saveEvery	celglob_responseata 4 strain stress damage tempCrackOpening pointData 2 displacements rotations extrapolatedNodeData 2 stress strain
+# VTKRCExporter faces  saveEvery celglob_responseata 1 tempCrackOpening

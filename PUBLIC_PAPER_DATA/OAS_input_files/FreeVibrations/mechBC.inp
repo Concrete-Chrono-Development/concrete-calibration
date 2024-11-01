@@ -1,0 +1,3 @@
+#	bcType	nodeIdx	KinTrX	KinTrY	KinTrZ	KinRotX	KinRotY	KinRotZ	StTrX	StTrY	StTrZ	StRotX	StRotY	StRotZ
+NodalBC	457465	0	0	0	 0	 0	 0	-1	-1	-1	-1	-1	-1  # bottom base fixed
+NodalBC	346	-1	-1	-1	-1	-1	-1 	1	-1	-1	-1	-1	-1  # uzel na rohu

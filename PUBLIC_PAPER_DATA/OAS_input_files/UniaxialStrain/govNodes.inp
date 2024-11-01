@@ -1,0 +1,4 @@
+# Type	nodeCrdX	nodeCrdY	nodeCrdZ
+MechDoF	0 0 0.2 6   # center top
+MechDoF	0 0 0 6    # center bottom
+MechDoF	0 0 0 6    # center bottom (doesn't really matter)

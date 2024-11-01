@@ -1,0 +1,5 @@
+LDPMMaterial    density	2338    E0	60273000000  alpha	0.25    ft	3440000  Gt	49.0833 fs	8944000  nt	0.40    fc0	150000000.00    Hc0	24109200000 Kc0	4.00    Kc1	1.00    Kc2	5.00    mu0	0.40    muinf	0.00    fs0	600000000.00    Ed	60273000000.00     beta	0.00    kt	0.00    ks	0.00    kc	0.00    rs	0.00    Hc1	6027300000.00   damage_residuum	0.1
+#VectMechMaterial	E0	60273000000	alpha	0.25	density	2338.000000
+TensMechMaterial	E   39000000000	nu	0.2 density 2338    # beam
+TensMechMaterial	E   200000000000	nu	0.3 density 7800    # platens
+

@@ -1,0 +1,11 @@
+TransientNonLinearMechanicalSolver
+time_step  4.000000e-05
+total_time 0.4
+solver_type	EigenLDLT
+stiffness_matrix_update	-1
+mass_matrix_update	-1
+tolerance	1.000000e-04
+limit_tolerance	1
+maxIt	100
+integration_method	generalized_alpha
+spectral_radius	0.8

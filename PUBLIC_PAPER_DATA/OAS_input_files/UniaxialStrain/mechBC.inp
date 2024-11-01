@@ -1,0 +1,4 @@
+# bcType	nodeIdx	KinTrX	KinTrY	KinTrZ	KinRotX	KinRotY	KinRotZ	StTrX	StTrY	StTrZ	StRotX	StRotY	StRotZ
+NodalBC	327549	0	0	1  0	0	0	-1	-1	-1	-1	-1	-1  # top govnode
+NodalBC	327550	0	0  0	0	0	0	-1	-1	-1	-1	-1	-1  # bottom govnode
+NodalBC	327551	0	0  0	0	0	0	-1	-1	-1	-1	-1	-1  # bottom govnode

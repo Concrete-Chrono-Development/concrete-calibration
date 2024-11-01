@@ -1,0 +1,10 @@
+Dimension	3
+Solver	solver.inp
+RegionFiles 1 regions.inp
+NodeFiles	3	nodes.inp	auxNodes.inp	govNodes.inp
+PBlockFiles	1	constraint.inp 
+MatFiles	1	materials.inp
+ElemFiles	1	mechElems.inp
+BCFiles	1	mechBC.inp
+FunctionFiles	1	functions.inp
+ExporterFiles	1	exporters.inp
