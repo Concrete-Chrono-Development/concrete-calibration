@@ -1,4 +1,4 @@
-Time [mm],u [mm],Stress [MPa],Number of Iterations
+Time [s],Strain [-],Stress [MPa],Number of Iterations
 0.0002,6.25e-07,-0.0250828190312827,2
 0.0003,2.5e-06,-0.100585924034078,2
 0.0004,5.65e-06,-0.226636638962859,2
