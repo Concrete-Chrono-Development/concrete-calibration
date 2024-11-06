@@ -1,0 +1,1210 @@
+OPTI ECHO 1;
+OPTI DENS 1;
+OPTI DIME 3;
+opti epsi lineaire;
+*opti 'SURV' 2310435;
+*opti erre igno;
+
+************************************************************************
+** MESH AND GEOMETRY 
+************************************************************************
+
+
+
+****************************************************************************************************
+**
+**Importing LDPM Mesh
+**
+
+INPUTGEO = '../LDPMgeo000-data';
+
+
+MAI100 = LDP1 INPUTGEO;
+*LIST(MAI100);
+*TRAC MAI100;
+
+*DEPL MAI100 'PLUS' (-50. 0. 0.);
+*DEPL MAI100 'TOUR' 180 (0. 50. 0.) (0. 50. 100.);
+
+
+CMX CMY CMZ = COOR MAI100;
+* SAMPLE SIZE
+RSAMPX1 = MINI CMX;
+RSAMPX2 = MAXI CMX;
+RSAMPY1 = MINI CMY;
+RSAMPY2 = MAXI CMY;
+RSAMPZ1 = MINI CMZ;
+RSAMPZ2 = MAXI CMZ;
+
+List(RSAMPX1);
+List(RSAMPX2);
+List(RSAMPY1);
+List(RSAMPY2);
+List(RSAMPZ1);
+List(RSAMPZ2);
+
+
+*env0 = enve mai100;
+*xcmx xcmy xcmz = coor env0;
+*motemp0 = mode env0 'MECANIQUE' 'ELASTIQUE' 'ISOTROPE';
+*chem1 = CHAN 'CHAM' xcmz env0;
+*chem1 = CHAN chem1 'GRAVITE' motemp0;
+*surpre1 = chem1 'ELEM' 'MAXI';
+
+*chem2 = CHAN 'CHAM' (((xcmx**2) + (xcmy**2))**0.5) env0;
+*chem2 = CHAN chem2 'GRAVITE' motemp0;
+*surpre2 =  chem2 'ELEM' 'COMPRIS' (0.98*RSAMPX2) (1.01*RSAMPX2) ;
+
+*area101 = @MESU surpre1;
+
+*OPTI 'SORT' 'MAI100.vtk';
+*SORT 'VTK' MAI100 'MESH' 'FORM' 'NPVD';
+*OPTI 'SORT' 'SUR100.vtk';
+*SORT 'VTK' SUR100 'MESH' 'FORM' 'NPVD';
+*OPTI 'SORT' 'SUR101.vtk';
+*SORT 'VTK' SUR101 'MESH' 'FORM' 'NPVD';
+
+************************************************************************
+** LDPM MODEL
+************************************************************************
+MOD100 = MODE MAI100 'MECANIQUE' 'ELASTIQUE' 'ISOTROPE'
+                   'ENDOMMAGEMENT' 'LDPM' 'LDPE';
+ 
+*'ISOTROPE'
+
+************************************************************************
+** MODEL PARAMETERS
+************************************************************************
+** Density
+V_RHO  = 2.338e-9;
+** Normal Modulus
+V_E0   = 60273; 
+** Alpha
+V_ALP1 = 0.25; 
+V_NU   = (1.0 - V_ALP1) / (4.0 + V_ALP1);
+V_E    = V_E0 * (1.0 - (2.0*V_NU)); 
+* V_E    = 37000.; COMM 'Elastic modulus';
+** Tensile Strength         
+V_FT   = 3.44;
+** Tensile characteristic length  
+V_CHLE = 500.0;
+** Shear strength ratio       
+V_FR   = 2.6;
+** Softening exponent    
+V_SENC = 0.4;
+** Compressive Yield Strength         
+V_FC   = 150.0;
+** Initial hardening modulus ratio         
+V_RHMD = 0.4;
+** Transitional Strain ratio         
+V_TSRN = 4.0;
+** Deviatoric strain threshold ratio         
+V_DK1  = 1.0;
+** Deviatoric damage parameter         
+V_DK2  = 5.0;
+** Initial friction         
+V_FMU0 = 0.4;
+** Asymptotic friction         
+V_FMUF = 0.0;
+** Transitional stress
+V_SF0  = 600.0;
+** Densification ratio
+V_DSR1 = 1.0;
+** Volumetric deviatoric coupling
+V_BETA = 0.0;
+** Tensile unloading parameter
+V_UNKT = 0.0;
+** Shear unloading parameter
+V_UNKS = 0.0;  
+** Compressive unloading parameter
+V_UNKC = 0.0;
+** Shear softening modulus ratio
+V_HR   = 0.0;
+** Final Hardening Modulus Ratio
+V_DK3  = 0.1;
+** Elastic Analysis Flag
+V_EAF  = 0.0;
+** Rate effect flag
+V_REF  = 0.0;
+** Rate Effect Parameter 0
+V_C0   = 1.0;
+** Rate Effect Parameter 1
+V_C1   = 1.0;
+
+
+MAT100 = MATE MOD100 'YOUN' V_E 'NU' V_NU 'RHO' V_RHO 'FT' V_FT 
+                  'SENC' V_SENC 'CHLE' V_CHLE 'FR' V_FR 'FC' V_FC 
+                  'HR' V_HR 'UNKT' V_UNKT 'EAF' V_EAF 'RHMD' V_RHMD 
+                  'TSRN' V_TSRN 'DK1' V_DK1 'DK2' V_DK2 'FMU0' V_FMU0 
+                  'FMUF' V_FMUF 'SF0' V_SF0 'DSR1' V_DSR1 'BETA' V_BETA 
+                  'UNKS' V_UNKS 'UNKC' V_UNKC 'DK3' V_DK3 'REF' V_REF 
+                  'C0' V_C0 'C1' V_C1;
+                  
+MOD99 = MODE MAI100 'MECANIQUE' 'ELASTIQUE' 'ISOTROPE';
+MAT99 = MATE MOD99 'YOUN' V_E 'NU' V_NU 'RHO' V_RHO;
+
+
+
+************************************************************************
+** MODEL CHARACTERISTICS AND MASS MATRIX
+************************************************************************
+************************************************************************
+MAT101 = MAT100 ET (LDP1 INPUTGEO MAI100 MOD100);
+MAS100 = MASS MOD100 MAT101;
+*LIST(type(MAS100));
+*LIST(MAS100);
+
+
+
+
+
+
+
+
+************************************************************************
+** Importing FE mesh
+************************************************************************
+
+
+**Reading files
+TAB_ELEM = LIRE 'CSV' 'FEM_ELEM.csv' 'DEBU' 1 'SEPA' ',' 'LIGN';
+TAB_points = LIRE 'CSV' 'FEM_coor.csv' 'DEBU' 1 'SEPA' ','  'LIGN';
+
+**Creating the first FEM element using the points
+P1 = ENTI (EXTR TAB_ELEM.1 2);
+P2 = ENTI (EXTR TAB_ELEM.1 3);
+P3 = ENTI (EXTR TAB_ELEM.1 4);
+P4 = ENTI (EXTR TAB_ELEM.1 5);
+
+ELEM_ALL = MANU 'TET4'   ( (EXTR TAB_points.P1 2) (EXTR TAB_points.P1 3) (EXTR TAB_points.P1 4) ) ( (EXTR TAB_points.P2 2) (EXTR TAB_points.P2 3) (EXTR TAB_points.P2 4) ) ( (EXTR TAB_points.P3 2) (EXTR TAB_points.P3 3) (EXTR TAB_points.P3 4) ) ( (EXTR TAB_points.P4 2) (EXTR TAB_points.P4 3) (EXTR TAB_points.P4 4) )  ;
+
+
+**Creating other FEM elements
+N1 = DIME TAB_ELEM;
+REPE B1 (N1-1);
+	P1 = ENTI (EXTR TAB_ELEM.(&B1+1) 2);
+	P2 = ENTI (EXTR TAB_ELEM.(&B1+1) 3);
+	P3 = ENTI (EXTR TAB_ELEM.(&B1+1) 4);
+	P4 = ENTI (EXTR TAB_ELEM.(&B1+1) 5);
+	Elem_loc = MANU 'TET4'   ( (EXTR TAB_points.P1 2) (EXTR TAB_points.P1 3) (EXTR TAB_points.P1 4) ) ( (EXTR 		TAB_points.P2 2) (EXTR TAB_points.P2 3) (EXTR TAB_points.P2 4) ) ( (EXTR TAB_points.P3 2) (EXTR TAB_points.P3 3) (EXTR TAB_points.P3 4) ) ( (EXTR TAB_points.P4 2) (EXTR TAB_points.P4 3) (EXTR TAB_points.P4 4) )  ;
+	ELEM_ALL = ELEM_ALL ET Elem_loc;
+fin B1;
+
+
+*TRAC ((ELEM_ALL coul vert) ET MAI100);
+
+*Moving it to the right place
+DEPL ELEM_ALL 'PLUS' (RSAMPX2 0. 0.);
+
+ELIM ELEM_ALL 1.E-6;
+
+
+
+
+*TRAC ((ELEM_ALL coul vert) ET MAI100);
+
+*building the sym part
+ELEM_ALL_Sym = ELEM_ALL SYME 'PLAN' ( ((RSAMPX1+RSAMPX2)/2) RSAMPY1 RSAMPZ1 ) ( ((RSAMPX1+RSAMPX2)/2) RSAMPY2 RSAMPZ2 )  ( ((RSAMPX1+RSAMPX2)/2) RSAMPY1 RSAMPZ2 );
+FEM_ELEM = ELEM_ALL ET ELEM_ALL_Sym;
+
+*TRAC ((ELEM_ALL coul vert) ET (ELEM_ALL_Sym coul roug) ET MAI100);
+*TRAC ((FEM_ELEM coul vert) ET MAI100);
+
+ELIM ELEM_ALL_Sym 1.E-6;
+
+
+
+
+
+* SAMPLE SIZE
+FMX FMY FMZ = COOR FEM_ELEM; 
+FSAMPX1 = MINI FMX;
+FSAMPX2 = MAXI FMX;
+FSAMPY1 = MINI FMY;
+FSAMPY2 = MAXI FMY;
+FSAMPZ1 = MINI FMZ;
+FSAMPZ2 = MAXI FMZ;
+
+
+List(FSAMPX1);
+List(FSAMPX2);
+List(FSAMPY1);
+List(FSAMPY2);
+List(FSAMPZ1);
+List(FSAMPZ2);
+
+
+**Beam Overall Dimensions
+S_Beam = FSAMPX2 - FSAMPX1;
+D_Beam = FSAMPZ2 - FSAMPZ1;
+W_Beam = FSAMPY2 - FSAMPY1;
+
+MESS 'The span of the beam is:';
+List(S_Beam);
+MESS 'The Depth of the beam is:';
+List(D_Beam);
+MESS 'The width of the beam is:';
+List(W_Beam);
+
+
+
+************************************************************************
+** Importing Steel mesh
+************************************************************************
+
+
+**Reading files
+TAB_ELEM = LIRE 'CSV' 'STEEL_ELEM.csv' 'DEBU' 1 'SEPA' ',' 'LIGN';
+TAB_points = LIRE 'CSV' 'STEEL_coor.csv' 'DEBU' 1 'SEPA' ','  'LIGN';
+
+**Creating the Steel FEM element using the points
+P1 = ENTI (EXTR TAB_ELEM.1 2);
+P2 = ENTI (EXTR TAB_ELEM.1 3);
+P3 = ENTI (EXTR TAB_ELEM.1 4);
+P4 = ENTI (EXTR TAB_ELEM.1 5);
+
+STEEL_ALL = MANU 'TET4'   ( (EXTR TAB_points.P1 2) (EXTR TAB_points.P1 3) (EXTR TAB_points.P1 4) ) ( (EXTR TAB_points.P2 2) (EXTR TAB_points.P2 3) (EXTR TAB_points.P2 4) ) ( (EXTR TAB_points.P3 2) (EXTR TAB_points.P3 3) (EXTR TAB_points.P3 4) ) ( (EXTR TAB_points.P4 2) (EXTR TAB_points.P4 3) (EXTR TAB_points.P4 4) )  ;
+
+
+**Creating other Steel FEM elements
+N1 = DIME TAB_ELEM;
+REPE B1 (N1-1);
+	P1 = ENTI (EXTR TAB_ELEM.(&B1+1) 2);
+	P2 = ENTI (EXTR TAB_ELEM.(&B1+1) 3);
+	P3 = ENTI (EXTR TAB_ELEM.(&B1+1) 4);
+	P4 = ENTI (EXTR TAB_ELEM.(&B1+1) 5);
+	Elem_loc = MANU 'TET4'   ( (EXTR TAB_points.P1 2) (EXTR TAB_points.P1 3) (EXTR TAB_points.P1 4) ) ( (EXTR 		TAB_points.P2 2) (EXTR TAB_points.P2 3) (EXTR TAB_points.P2 4) ) ( (EXTR TAB_points.P3 2) (EXTR TAB_points.P3 3) (EXTR TAB_points.P3 4) ) ( (EXTR TAB_points.P4 2) (EXTR TAB_points.P4 3) (EXTR TAB_points.P4 4) )  ;
+	STEEL_ALL = STEEL_ALL ET Elem_loc;
+fin B1;
+
+ELIM STEEL_ALL 1.E-6;
+
+
+
+**Moving the steel to the righ place
+DEPL STEEL_ALL 'PLUS' (-513 0. -10.);
+*TRAC ((STEEL_ALL coul vert) ET (FEM_ELEM) ET MAI100);
+
+**creatinf the sym part
+STEEL_ALL_Sym = STEEL_ALL SYME 'PLAN' ( ((RSAMPX1+RSAMPX2)/2) RSAMPY1 RSAMPZ1 ) ( ((RSAMPX1+RSAMPX2)/2) RSAMPY2 RSAMPZ2 )  ( ((RSAMPX1+RSAMPX2)/2) RSAMPY1 RSAMPZ2 );
+FEM_STEEL = STEEL_ALL ET STEEL_ALL_Sym;
+*TRAC ((FEM_STEEL coul vert) ET (FEM_ELEM) ET MAI100);
+
+ELIM STEEL_ALL_Sym 1.E-6;
+
+
+* Steel SAMPLE SIZE
+SMX SMY SMZ = COOR FEM_STEEL; 
+FSAMPX1 = MINI SMX;
+FSAMPX2 = MAXI SMX;
+FSAMPY1 = MINI SMY;
+FSAMPY2 = MAXI SMY;
+FSAMPZ1 = MINI SMZ;
+FSAMPZ2 = MAXI SMZ;
+
+List(FSAMPX1);
+List(FSAMPX2);
+List(FSAMPY1);
+List(FSAMPY2);
+List(FSAMPZ1);
+List(FSAMPZ2);
+
+
+**Creating the load plate
+STEEL_LOAD = STEEL_ALL SYME 'PLAN' (RSAMPX1 RSAMPY1 ((RSAMPZ2+RSAMPZ1)/2) ) (RSAMPX1 RSAMPY2 ((RSAMPZ2+RSAMPZ1)/2) )  ( RSAMPX2 RSAMPY1 ((RSAMPZ2+RSAMPZ1)/2) ) ;
+
+ELIM STEEL_LOAD 1.E-6;
+
+
+DEPL STEEL_LOAD 'PLUS' (563. 0. 0.);
+
+
+
+*TRAC ((FEM_STEEL coul vert) ET (STEEL_LOAD coul roug) ET (FEM_ELEM) ET MAI100);
+*TRAC ((STEEL_ALL coul vert) ET (STEEL_ALL_Sym coul roug) ET (ELEM_ALL coul vert) ET (ELEM_ALL_Sym coul roug) ET MAI100);
+
+
+* Steel load SAMPLE SIZE
+SLMX SLMY SLMZ = COOR STEEL_LOAD; 
+FSLAMPX1 = MINI SLMX;
+FSLAMPX2 = MAXI SLMX;
+FSLAMPY1 = MINI SLMY;
+FSLAMPY2 = MAXI SLMY;
+FSLAMPZ1 = MINI SLMZ;
+FSLAMPZ2 = MAXI SLMZ;
+
+
+*List(FSLAMPX1);
+*List(FSLAMPX2);
+*List(FSLAMPY1);
+*List(FSLAMPY2);
+*List(FSLAMPZ1);
+*List(FSLAMPZ2);
+
+ALL_STE = FEM_STEEL ET STEEL_LOAD;
+
+
+
+
+
+
+
+
+
+STOT = MAI100 ET ELEM_ALL ET ELEM_ALL_Sym ET STEEL_ALL ET STEEL_ALL_Sym ET STEEL_LOAD;
+SFEM = ELEM_ALL ET ELEM_ALL_Sym ET STEEL_ALL ET STEEL_ALL_Sym ET STEEL_LOAD;
+
+ELIM STOT 1.E-6;
+
+
+ALL_MESH = MAI100 ET ELEM_ALL ET ELEM_ALL_Sym ET ALL_STE;
+*TRAC ALL_MESH;
+
+*TRAC (ELEM_ALL_Sym ET STEEL_ALL);
+
+*TRAC (ELEM_ALL ET STEEL_ALL_Sym);
+*TRAC MAI100;
+
+************************************************************************
+** Selecting the important points
+************************************************************************
+
+
+** bottom surface
+SUR100 = CMZ POIN 'EGINFE' 0.01;
+
+*TRAC ((SUR100 coul vert) ET MAI100);
+
+** CMOD
+CMOD_LINE_1 = (REDU CMX SUR100) POIN 'COMPRIS' (((RSAMPX2+RSAMPX1)/2) - 2.5) ((RSAMPX2+RSAMPX1)/2);
+CMOD_LINE_2 = (REDU CMX SUR100) POIN 'COMPRIS' ((RSAMPX2+RSAMPX1)/2) (((RSAMPX2+RSAMPX1)/2) + 2.5);
+
+*TRAC (MAI100 ET (CMOD_LINE_1 coul roug) ET (CMOD_LINE_2 coul vert));
+
+
+** bottom Support
+SUR_Sup_ALL = SMZ POIN 'EGINFE' -9.99;
+SUR_Sup_L = (REDU SMX SUR_Sup_ALL) POIN 'COMPRIS' -523. -503.;
+SUR_Sup_R = (REDU SMX SUR_Sup_ALL) POIN 'COMPRIS' 603. 623.;
+
+SUR_Sup = SUR_Sup_L ET SUR_Sup_R;
+*TRAC SUR_Sup;
+
+
+*TRAC ((SUR_Sup coul vert) ET (FEM_STEEL) ET (STEEL_LOAD coul roug) ET (FEM_ELEM) ET MAI100);
+
+** Load area
+SUR_LOAD_ALL = SLMZ POIN 'EGSUPE' 209.99;
+SUR_LOAD = (REDU SLMX SUR_LOAD_ALL) POIN 'COMPRIS' -40. 60.;
+
+**** Load area
+***SUR_LOAD_ALL = CMZ POIN 'EGSUPE' 199.99;
+***SUR_LOAD = (REDU CMX SUR_LOAD_ALL) POIN 'COMPRIS' -20. 20.;
+
+*LIST(SUR_LOAD);
+*TRAC SUR_LOAD;
+
+
+** point at top middle
+POI_TOP = POIN STEEL_LOAD PROC (50. 50. 210.);
+POI_BL = POIN FEM_STEEL PROC (-513. 50. -10.);
+POI_BR = POIN FEM_STEEL PROC (613. 50. -10.);
+*TRAC STEEL_LOAD;
+
+
+TRAC ((SUR_Sup coul vert) ET STEEL_LOAD ET FEM_STEEL ET (SUR_LOAD coul roug) ET (FEM_ELEM) ET MAI100);
+*TRAC ( STEEL_LOAD ET FEM_STEEL ET (SUR_LOAD coul roug) ET (FEM_ELEM) ET MAI100);
+*TRAC FEM_STEEL;
+
+
+
+************************************************************************
+** Connect the meshes
+************************************************************************
+
+RIG1 = RELA MAI100 'ACCRO' ELEM_ALL 1.e-3;
+RIG2 = RELA MAI100 'ACCRO' ELEM_ALL_Sym 1.e-3;
+RIG3 = RELA MAI100 'ACCRO' STEEL_LOAD 1.e-3;
+RIG4 = RELA STEEL_ALL 'ACCRO' ELEM_ALL_Sym 1.e-3;
+RIG5 = RELA STEEL_ALL_Sym 'ACCRO' ELEM_ALL 1.e-3;
+
+
+RAD1 = CHAN 'DEPE' RIG1;
+RAD2 = CHAN 'DEPE' RIG2;
+RAD3 = CHAN 'DEPE' RIG3;
+RAD4 = CHAN 'DEPE' RIG4;
+RAD5 = CHAN 'DEPE' RIG5;
+
+
+************************************************************************
+** FEM MODEL
+************************************************************************
+                
+MOD200 = MODE ELEM_ALL 'MECANIQUE' 'ELASTIQUE' 'ISOTROPE';
+MOD210 = MODE ELEM_ALL_Sym 'MECANIQUE' 'ELASTIQUE' 'ISOTROPE';
+MOD300 = MODE ALL_STE 'MECANIQUE' 'ELASTIQUE' 'ISOTROPE';
+
+MAT201 = MATE MOD200 'YOUN' 39000 'NU' 0.2 'RHO' 2.338E-9;
+MAT211 = MATE MOD210 'YOUN' 39000 'NU' 0.2 'RHO' 2.338E-9;
+MAT301 = MATE MOD300 'YOUN' 200000 'NU' 0.3 'RHO' 7.8E-9;
+
+
+
+************************************************************************
+** BOUNDARY CONDITIONS
+************************************************************************
+** bottom surface
+BCS101 = BLOQ POI_BL 'UY' 'UZ';
+BCS102 = BLOQ POI_BR 'UY' 'UZ';
+** top surface
+BCS103 = BLOQ SUR_LOAD 'UY' 'UX';
+BCS105 = BLOQ SUR_LOAD 'UZ';
+
+
+BCSTOT = BCS101 ET BCS102 ET BCS103 ET BCS105;
+
+
+
+***BCS100 = BLOQ SUR_Sup 'UZ';
+***BCS105 = BLOQ SUR_LOAD 'UZ';
+
+************************************************************************
+** LOADING CONDITIONS 
+************************************************************************
+step1 = 0.0001;
+V0 = 15.;
+SLOP_0 = 15./0.002;
+
+Prog1 = PROG. 0. pas step1 0.002;
+Prog2 = PROG. 0.0021 pas step1 0.043;
+
+ECHARUZ1 = EVOL MANU 'TEMPS' (Prog1 ET Prog2) 'DEPL' (0.5*SLOP_0*(Prog1*Prog1) ET (V0*Prog2 - 0.015));
+*DESS (ECHARUZ1);
+
+DBC5 = DEPI BCS105 -1.;
+CHARUZ1 = CHAR 'DIMP' ECHARUZ1 DBC5;
+
+****
+step_out = 0.0005;
+Prog_Out = PROG. 0. pas step_out 0.043;
+
+
+
+************************************************************************
+** TABLE PASAPAS 
+************************************************************************
+
+modelas= MOD200 ET MOD210 ET MOD300;
+matelas= MAT201 ET MAT211 ET MAT301;
+RIGE=RIGI MODELAS MATELAS;
+
+
+'OPTI' 'SAUV' 'SAVE_FILE.SAUV';
+Prog_SAVE = PROG. 0. pas 0.001 0.043;
+
+
+TO = TABLE;
+TO.'DYNAMIQUE'           = FAUX;
+TO.'DISCRET'             = VRAI;
+TO.'GRANDS_DEPLACEMENTS' = FAUX;
+TO.'MODELE'              = MOD100;
+TO.'CARACTERISTIQUES'    = MAT101;
+TO.'CHARGEMENT'          = CHARUZ1;
+*TO.'BLOCAGES_MECANIQUES' = BCSTOT ET RIG1 ET RIG2 ET RIG3 ET RIG4 ET RIG5;
+TO.'BLOCAGES_MECANIQUES' = BCSTOT ET RAD1 ET RAD2 ET RAD3 ET RAD4 ET RAD5;
+TO.'DEPLACEMENTS'        = TABL;
+TO.'DEPLACEMENTS'. 0     = MANU 'CHPO' ALL_MESH 6 'UX' 0. 'UY' 0. 'UZ' 0. 'RX' 0. 'RY' 0. 'RZ' 0.;
+TO.'PROCEDURE_PERSO1'    = VRAI;
+* TO.'AUTOMATIQUE'         = VRAI;
+* TO.'AUTOCRIT'            = AUTOCRI1;
+TO.'MOVA'                = 'TCOG';
+TO.'CONVERGENCE_FORCEE'  = FAUX;
+TO.'MAXITERATION'        = 250;
+TO.'DELTAITER'           = 250;
+TO.'PAS_AJUSTE'          = FAUX;
+TO.'PRECISION'           = 1e-4;
+TO.'TEMPS_CALCULES'      = (Prog1 ET Prog2);
+TO.'TEMPS_SAUVES'        = (Prog1 ET Prog2); 
+TO.'TEMPS_SAUVEGARDES'   = Prog_SAVE;
+TO.'ECONOMIQUE'          = VRAI;
+TO.'PROCESSEURS'         = 'AUTOMATIQUE';
+TO.'RIGIDITE_CONSTANTE' = RIGE;
+* TO.'PROCESSEURS'         = 'MONO_PROCESSEUR';
+
+
+TO.'MT'= TABL;
+TO.'MT'.'GEOLDPM' = MAI100;
+TO.'MT'.'STEEL1' = STEEL_ALL;
+TO.'MT'.'STEEL2' = STEEL_ALL_Sym;
+TO.'MT'.'STEEL_L' = STEEL_LOAD;
+TO.'MT'.'POI_TOP' = POI_TOP;
+TO.'MT'.'POI_BL' = POI_BL;
+TO.'MT'.'POI_BR' = POI_BR;
+TO.'MT'.'GEOCONCR' = FEM_ELEM;
+TO.'MT'.'HISTSIZE' = 0;
+TO.'MT'.'CMOD1' = CMOD_LINE_1;
+TO.'MT'.'CMOD2' = CMOD_LINE_2;
+TO.'MT'.'SURF1' = SUR_Sup;
+TO.'MT'.'SURFL' = SUR_LOAD;
+TO.'MT'.'CMOD' = PROG ;
+TO.'MT'.'UX1' = PROG ;
+TO.'MT'.'UX2' = PROG ;
+TO.'MT'.'UZ1' = PROG ;
+TO.'MT'.'Force' = PROG ;
+TO.'MT'.'REAC1' = PROG ;
+TO.'MT'.'REAC2' = PROG ;
+TO.'MT'.'TIME' = PROG ;
+TO.'MT'.'EXT_W' = PROG;
+TO.'MT'.'INT_W' = PROG;
+TO.'MT'.'KIN_EN' = PROG;
+TO.'MT'.'KIN_ENL' = PROG;
+TO.'MT'.'KIN_EN1' = PROG;
+TO.'MT'.'KIN_EN2' = PROG;
+TO.'MT'.'INT_W_H' = 0;
+TO.'MT'.'INT_loc_H' = 0;
+TO.'MT'.'INT_For' = PROG;
+TO.'MT'.'EXT_W_H' = 0;
+*TO.'MT'.'EXT_For' = PROG;
+TO.'MT'.'INT_DEP_H' = PROG;
+TO.'MT'.'EXT_DEP_H' = PROG;
+
+TO.'MT'.'GEOSteel' = ALL_STE;
+TO.'MT'.'GEOFEM' = ELEM_ALL ET ELEM_ALL_Sym ;
+
+TO.'MT'.'INT_W_H_1' = PROG;
+TO.'MT'.'INT_loc_H_1' = PROG;
+TO.'MT'.'INT_W_1' = PROG;
+TO.'MT'.'INT_DEP_H_1' = PROG;
+TO.'MT'.'INT_W_H_2' = PROG;
+TO.'MT'.'INT_loc_H_2' = PROG;
+TO.'MT'.'INT_W_2' = PROG;
+TO.'MT'.'INT_DEP_H_2' = PROG;
+
+TO.'MT'.'INT_W_F' = PROG;
+
+
+DEBP PERSO1 T1*'TABLE';
+
+IAPPEL = T1.PERSO1_APPEL;
+SI (IAPPEL EGA 1);
+  MESS 'PERSO1 init';
+  QUIT PERSO1;
+FINSI;
+
+IDOM = DIME T1.DEPLACEMENTS;
+
+SI (IDOM < 2);
+  MESS 'No reaction before second step';
+  QUIT PERSO1;
+FINSI;
+
+
+
+MODE12 = T1.MODELE;
+MATE12 = T1.CARACTERISTIQUES;
+DEPL_A = T1.DEPLACEMENTS;
+DEPL12 = T1.CONTINUATION.DEPLACEMENTS;
+REAC12 = T1.CONTINUATION.REACTIONS;
+REAC13 = REAC DEPL12 BCSTOT;
+SIGM12 = T1.CONTINUATION.CONTRAINTES;
+VARI12 = T1.CONTINUATION.VARIABLES_INTERNES;
+*VITE12 = T1.CONTINUATION.VITESSES;
+BLOCK12 = T1.BLOCAGES_MECANIQUES;
+TEMPS12 = T1.CONTINUATION.TEMPS;
+
+STEEL1 = T1.'MT'.'STEEL1';
+STEEL2 = T1.'MT'.'STEEL2';
+STEEL_L = T1.'MT'.'STEEL_L';
+
+REAC1 = REDU T1.CONTINUATION.REACTIONS STEEL1;
+REAC2 = REDU T1.CONTINUATION.REACTIONS STEEL2;
+REAC_L = REDU T1.CONTINUATION.REACTIONS STEEL_L;
+
+DEPL_1 = REDU T1.CONTINUATION.DEPLACEMENTS STEEL1;
+DEPL_2 = REDU T1.CONTINUATION.DEPLACEMENTS STEEL2;
+DEPL_L = REDU T1.CONTINUATION.DEPLACEMENTS STEEL_L;
+
+
+
+
+GEOLDPM = T1.'MT'.'GEOLDPM';
+
+GEOSteel = T1.'MT'.'GEOSteel';
+GEOFEM = T1.'MT'.'GEOFEM';
+
+ALLMESH = GEOLDPM ET GEOSteel ET GEOFEM;
+
+DEPL12_2 = REDU T1.CONTINUATION.DEPLACEMENTS GEOLDPM;
+
+*TRAC ALLMESH;
+*TRAC ALLMESH DEPL12;
+
+
+
+
+
+MESS 'The time is:';
+list(TEMPS12);
+MESS '*********************';
+
+
+
+LOG1 = DANS Prog_Out TEMPS12;
+LIST(LOG1);
+
+LOG2 = 1.;
+SI (LOG1);
+	LOG2 = 0.;
+FINSI;
+
+SI (LOG2 > 0);
+	QUIT PERSO1;		
+FINSI;
+MESS '***###***Computing Outputs***###***';
+
+I1 = T1.'MT'.'HISTSIZE' + 1;
+
+**computing the time
+T1.'MT'.'TIME' = INSE T1.'MT'.'TIME' I1 (TEMPS12);
+
+
+
+**computing the displacement
+tmp1 = EXTR DEPL12 'VALE' 'UZ' T1.'MT'.'POI_TOP';
+T1.'MT'.'UZ1' = INSE T1.'MT'.'UZ1' I1 ((SOMM tmp1)/(DIME tmp1));
+
+
+**computing the Force
+tmp2 = EXTR REAC12 'VALE' 'FZ' T1.'MT'.'SURFL';
+T1.'MT'.'Force' = INSE T1.'MT'.'Force' I1 (SOMM tmp2);
+
+
+
+**computing the CMOD
+tmp1 = EXTR DEPL12 'VALE' 'UX' T1.'MT'.'CMOD1';
+tmp2 = EXTR DEPL12 'VALE' 'UX' T1.'MT'.'CMOD2';
+tmp = (ABS ((SOMM tmp2)/(DIME tmp2))) - ( ((SOMM tmp1)/(DIME tmp1)));
+T1.'MT'.'CMOD' = INSE T1.'MT'.'CMOD' I1 tmp;
+
+
+**computing the Reactions
+tmp1 = EXTR REAC1 'VALE' 'FZ' T1.'MT'.'SURF1';
+tmp2 = EXTR REAC2 'VALE' 'FZ' T1.'MT'.'SURF1';
+T1.'MT'.'REAC1' = INSE T1.'MT'.'REAC1' I1 (SOMM tmp1);
+T1.'MT'.'REAC2' = INSE T1.'MT'.'REAC2' I1 (SOMM tmp2);
+
+
+
+**computing the horizontal movement
+tmp1 = EXTR DEPL12 'VALE' 'UX' T1.'MT'.'POI_BL';
+tmp2 = EXTR DEPL12 'VALE' 'UX' T1.'MT'.'POI_BR';
+T1.'MT'.'UX1' = INSE T1.'MT'.'UX1' I1 ((SOMM tmp1)/(DIME tmp1));
+T1.'MT'.'UX2' = INSE T1.'MT'.'UX2' I1 ((SOMM tmp2)/(DIME tmp2));
+
+
+
+*Extracting The Kin energy LDPM
+*tmp3 = MAS100*VITE12;
+*tmp4 = PSCA tmp3 VITE12 (MOTS FX FY FZ MX MY MZ) (MOTS UX UY UZ RX RY RZ);
+*tmp4_S = EXTR tmp4 'VALE' 'SCAL';
+*T1.'MT'.'KIN_ENL' = INSE T1.'MT'.'KIN_ENL' I1 (SOMM(tmp4_S)/2);
+
+
+*Extracting The Kin energy (FEM1)
+*MASS1 =  MASSE  MOD200  MAT201;
+*tmp3 = MASS1*VITE12;
+*tmp4 = PSCA tmp3 VITE12 (MOTS FX FY FZ MX MY MZ) (MOTS UX UY UZ RX RY RZ);
+*tmp4_S = EXTR tmp4 'VALE' 'SCAL';
+*T1.'MT'.'KIN_EN1' = INSE T1.'MT'.'KIN_EN1' I1 (SOMM(tmp4_S)/2);
+
+*Extracting The Kin energy (FEM2)
+*MASS2 =  MASSE  MOD210  MAT211;
+*tmp3 = MASS2*VITE12;
+*tmp4 = PSCA tmp3 VITE12 (MOTS FX FY FZ MX MY MZ) (MOTS UX UY UZ RX RY RZ);
+*tmp4_S = EXTR tmp4 'VALE' 'SCAL';
+*T1.'MT'.'KIN_EN2' = INSE T1.'MT'.'KIN_EN2' I1 (SOMM(tmp4_S)/2);
+
+*T1.'MT'.'KIN_EN' = T1.'MT'.'KIN_ENL' + T1.'MT'.'KIN_EN1' +T1.'MT'.'KIN_EN2';
+
+**Extracting EXT Work
+SI (I1 EGA 1);
+	MESS 'Ext option 1';
+	DEPL_HIS = TO.DEPLACEMENTS.(0);
+	DEPL_1 = TO.DEPLACEMENTS.(1);
+	DEPL_D = DEPL_1 - DEPL_HIS;
+	REAC_1 = TO.REACTIONS.(1);
+	tmp5 = PSCA REAC_1 DEPL_D (MOTS FX FY FZ MX MY MZ) (MOTS UX UY UZ RX RY RZ);
+	tmp5_S = EXTR tmp5 'VALE' 'SCAL';
+	T1.'MT'.'EXT_W' = INSE T1.'MT'.'EXT_W' I1 (SOMM(tmp5_S));
+	tmp5_Fin = (SOMM(tmp5_S));
+	T1.'MT'.'EXT_W_H' = tmp5_Fin;
+	T1.'MT'.'EXT_DEP_H' = DEPL_1;
+SINON;
+	MESS 'Ext option 2';
+	DEPL_HIS = T1.'MT'.'EXT_DEP_H';
+	DEPL_D = DEPL12 - DEPL_HIS;	
+	tmp5_D = PSCA REAC12 DEPL_D (MOTS FX FY FZ MX MY MZ) (MOTS UX UY UZ RX RY RZ);
+	tmp5_S = EXTR tmp5_D 'VALE' 'SCAL';
+	tmp5_H = T1.'MT'.'EXT_W_H';
+	tmp5_Fin = ((SOMM(tmp5_S)) + tmp5_H);
+	T1.'MT'.'EXT_W' = INSE T1.'MT'.'EXT_W' I1 (tmp5_Fin);
+	T1.'MT'.'EXT_W_H' = tmp5_Fin;
+	T1.'MT'.'EXT_DEP_H' = DEPL12;
+FINSI;
+
+
+
+
+**Extracting INT Work
+T1.'MT'.'INT_loc_H'  = 0;
+T1.'MT'.'INT_loc_H_1'  = 0;
+T1.'MT'.'INT_loc_H_2'  = 0;
+
+N1 = NBEL MAI100;
+SI (I1 EGA 1);
+	REPE B1 (N1);
+		SI ((&B1) EGA 1);
+			ELEM_P = MAI100 ELEM (&B1);
+			MOD_ELEM = REDU MODE12 ELEM_P;
+			MAT_ELEM = REDU MATE12 ELEM_P;
+			SIG_ELEM = REDU SIGM12 ELEM_P;
+			DEP_ELEM = REDU DEPL12 ELEM_P;
+			F_ELEM = BSIGMA MOD_ELEM SIG_ELEM MAT_ELEM;
+			tmp6 = PSCA F_ELEM DEP_ELEM (MOTS FX FY FZ MX MY MZ) (MOTS UX UY UZ RX RY RZ);
+			tmp6_S = EXTR tmp6 'VALE' 'SCAL';
+			T1.'MT'.'INT_loc_H' = (SOMM(tmp6_S));
+		SINON;
+			ELEM_P = MAI100 ELEM (&B1);
+			MOD_ELEM = REDU MODE12 ELEM_P;
+			MAT_ELEM = REDU MATE12 ELEM_P;
+			SIG_ELEM = REDU SIGM12 ELEM_P;
+			DEP_ELEM = REDU DEPL12 ELEM_P;
+			F_ELEM = BSIGMA MOD_ELEM SIG_ELEM MAT_ELEM;
+			tmp6 = PSCA F_ELEM DEP_ELEM (MOTS FX FY FZ MX MY MZ) (MOTS UX UY UZ RX RY RZ);
+			tmp6_S = EXTR tmp6 'VALE' 'SCAL';
+			tmp6_H = T1.'MT'.'INT_loc_H';
+			tmp6_Fin = (SOMM(tmp6_S) + tmp6_H);
+			T1.'MT'.'INT_loc_H' = tmp6_Fin;
+		FINSI;
+	fin B1;
+	MESS 'Int option 1';
+	INT_W = (T1.'MT'.'INT_loc_H');
+	T1.'MT'.'INT_W' = INSE T1.'MT'.'INT_W' I1 (INT_W);
+	T1.'MT'.'INT_W_H' = INT_W;
+	T1.'MT'.'INT_DEP_H' = DEPL12;
+SINON;
+	REPE B1 (N1);
+		SI ((&B1) EGA 1);
+			ELEM_P = MAI100 ELEM (&B1);
+			MOD_ELEM = REDU MODE12 ELEM_P;
+			MAT_ELEM = REDU MATE12 ELEM_P;
+			SIG_ELEM = REDU SIGM12 ELEM_P;
+			DEPL_HIS = T1.'MT'.'INT_DEP_H';
+			DEP_H_R = REDU DEPL_HIS ELEM_P;
+			DEP_1_R = REDU DEPL12 ELEM_P;		
+			DEPL_D = DEPL12 - DEPL_HIS;
+			F_ELEM = BSIGMA MOD_ELEM SIG_ELEM MAT_ELEM;
+			tmp6 = PSCA F_ELEM DEPL_D (MOTS FX FY FZ MX MY MZ) (MOTS UX UY UZ RX RY RZ);
+			tmp6_S = EXTR tmp6 'VALE' 'SCAL';
+			T1.'MT'.'INT_loc_H' = (SOMM(tmp6_S));
+		SINON;
+			ELEM_P = MAI100 ELEM (&B1);
+			MOD_ELEM = REDU MODE12 ELEM_P;
+			MAT_ELEM = REDU MATE12 ELEM_P;
+			SIG_ELEM = REDU SIGM12 ELEM_P;
+			DEPL_HIS = T1.'MT'.'INT_DEP_H';
+			DEP_H_R = REDU DEPL_HIS ELEM_P;
+			DEP_1_R = REDU DEPL12 ELEM_P;		
+			DEPL_D = DEPL12 - DEPL_HIS;
+			F_ELEM = BSIGMA MOD_ELEM SIG_ELEM MAT_ELEM;
+			tmp6 = PSCA F_ELEM DEPL_D (MOTS FX FY FZ MX MY MZ) (MOTS UX UY UZ RX RY RZ);
+			tmp6_S = EXTR tmp6 'VALE' 'SCAL';
+			tmp6_H = T1.'MT'.'INT_loc_H';
+			tmp6_Fin = (SOMM(tmp6_S) + tmp6_H);
+			T1.'MT'.'INT_loc_H' = tmp6_Fin;
+		FINSI;
+	fin B1;
+	MESS 'Int option 2';
+	tmp6_H = T1.'MT'.'INT_W_H';
+	INT_W = (T1.'MT'.'INT_loc_H' + tmp6_H);
+	T1.'MT'.'INT_W' = INSE T1.'MT'.'INT_W' I1 (INT_W);
+	T1.'MT'.'INT_W_H' = INT_W;
+	T1.'MT'.'INT_DEP_H' = DEPL12;
+FINSI;
+
+
+
+**Extracting INT Work (FEM)
+
+EPS12 = EPSI DEPL12 MAT201 MOD200;
+SIG12 = ELAS EPS12 MAT201 MOD200;
+
+N1 = NBEL ELEM_ALL;
+SI (I1 EGA 1);
+    REPE B1 (N1);
+        SI ((&B1) EGA 1);
+            ELEM_P = ELEM_ALL ELEM (&B1);
+            MOD_ELEM = REDU MOD200 ELEM_P;
+            MAT_ELEM = REDU MAT201 ELEM_P;
+            SIG_ELEM = REDU SIG12 ELEM_P;
+            DEP_ELEM = REDU DEPL12 ELEM_P;
+            F_ELEM = BSIGMA MOD_ELEM SIG_ELEM MAT_ELEM;
+            tmp6 = PSCA F_ELEM DEP_ELEM (MOTS FX FY FZ MX MY MZ) (MOTS UX UY UZ RX RY RZ);
+            tmp6_S = EXTR tmp6 'VALE' 'SCAL';
+            T1.'MT'.'INT_loc_H_1' = (SOMM(tmp6_S));
+        SINON;
+            ELEM_P = ELEM_ALL ELEM (&B1);
+            MOD_ELEM = REDU MOD200 ELEM_P;
+            MAT_ELEM = REDU MAT201 ELEM_P;
+            SIG_ELEM = REDU SIG12 ELEM_P;
+            DEP_ELEM = REDU DEPL12 ELEM_P;
+            F_ELEM = BSIGMA MOD_ELEM SIG_ELEM MAT_ELEM;
+            tmp6 = PSCA F_ELEM DEP_ELEM (MOTS FX FY FZ MX MY MZ) (MOTS UX UY UZ RX RY RZ);
+            tmp6_S = EXTR tmp6 'VALE' 'SCAL';
+            tmp6_H = T1.'MT'.'INT_loc_H_1';
+            tmp6_Fin = (SOMM(tmp6_S) + tmp6_H);
+            T1.'MT'.'INT_loc_H_1' = tmp6_Fin;
+        FINSI;
+    fin B1;
+    MESS 'Int option 1';
+    INT_W = (T1.'MT'.'INT_loc_H_1');
+    T1.'MT'.'INT_W_1' = INSE T1.'MT'.'INT_W_1' I1 (INT_W);
+    T1.'MT'.'INT_W_H_1' = INT_W;
+    T1.'MT'.'INT_DEP_H_1' = DEPL12;
+SINON;
+    REPE B1 (N1);
+        SI ((&B1) EGA 1);
+            ELEM_P = ELEM_ALL ELEM (&B1);
+            MOD_ELEM = REDU MOD200 ELEM_P;
+            MAT_ELEM = REDU MAT201 ELEM_P;
+            SIG_ELEM = REDU SIG12 ELEM_P;
+            DEPL_HIS = T1.'MT'.'INT_DEP_H_1';
+            DEP_H_R = REDU DEPL_HIS ELEM_P;
+            DEP_1_R = REDU DEPL12 ELEM_P;
+            DEPL_D = DEPL12 - DEPL_HIS;
+            F_ELEM = BSIGMA MOD_ELEM SIG_ELEM MAT_ELEM;
+            tmp6 = PSCA F_ELEM DEPL_D (MOTS FX FY FZ MX MY MZ) (MOTS UX UY UZ RX RY RZ);
+            tmp6_S = EXTR tmp6 'VALE' 'SCAL';
+            T1.'MT'.'INT_loc_H_1' = (SOMM(tmp6_S));
+        SINON;
+            ELEM_P = ELEM_ALL ELEM (&B1);
+            MOD_ELEM = REDU MOD200 ELEM_P;
+            MAT_ELEM = REDU MAT201 ELEM_P;
+            SIG_ELEM = REDU SIG12 ELEM_P;
+            DEPL_HIS = T1.'MT'.'INT_DEP_H_1';
+            DEP_H_R = REDU DEPL_HIS ELEM_P;
+            DEP_1_R = REDU DEPL12 ELEM_P;
+            DEPL_D = DEPL12 - DEPL_HIS;
+            F_ELEM = BSIGMA MOD_ELEM SIG_ELEM MAT_ELEM;
+            tmp6 = PSCA F_ELEM DEPL_D (MOTS FX FY FZ MX MY MZ) (MOTS UX UY UZ RX RY RZ);
+            tmp6_S = EXTR tmp6 'VALE' 'SCAL';
+            tmp6_H = T1.'MT'.'INT_loc_H_1';
+            tmp6_Fin = (SOMM(tmp6_S) + tmp6_H);
+            T1.'MT'.'INT_loc_H_1' = tmp6_Fin;
+        FINSI;
+    fin B1;
+    MESS 'Int option 2';
+    tmp6_H = T1.'MT'.'INT_W_H_1';
+    INT_W = (T1.'MT'.'INT_loc_H_1' + tmp6_H);
+    T1.'MT'.'INT_W_1' = INSE T1.'MT'.'INT_W_1' I1 (INT_W);
+    T1.'MT'.'INT_W_H_1' = INT_W;
+    T1.'MT'.'INT_DEP_H_1' = DEPL12;
+FINSI;
+
+
+
+**Extracting INT Work (FEM)
+
+EPS13 = EPSI DEPL12 MAT211 MOD210;
+SIG13 = ELAS EPS13 MAT211 MOD210;
+
+N1 = NBEL ELEM_ALL_Sym;
+SI (I1 EGA 1);
+    REPE B1 (N1);
+        SI ((&B1) EGA 1);
+            ELEM_P = ELEM_ALL_Sym ELEM (&B1);
+            MOD_ELEM = REDU MOD210 ELEM_P;
+            MAT_ELEM = REDU MAT211 ELEM_P;
+            SIG_ELEM = REDU SIG13 ELEM_P;
+            DEP_ELEM = REDU DEPL12 ELEM_P;
+            F_ELEM = BSIGMA MOD_ELEM SIG_ELEM MAT_ELEM;
+            tmp6 = PSCA F_ELEM DEP_ELEM (MOTS FX FY FZ MX MY MZ) (MOTS UX UY UZ RX RY RZ);
+            tmp6_S = EXTR tmp6 'VALE' 'SCAL';
+            T1.'MT'.'INT_loc_H_2' = (SOMM(tmp6_S));
+        SINON;
+            ELEM_P = ELEM_ALL_Sym ELEM (&B1);
+            MOD_ELEM = REDU MOD210 ELEM_P;
+            MAT_ELEM = REDU MAT211 ELEM_P;
+            SIG_ELEM = REDU SIG13 ELEM_P;
+            DEP_ELEM = REDU DEPL12 ELEM_P;
+            F_ELEM = BSIGMA MOD_ELEM SIG_ELEM MAT_ELEM;
+            tmp6 = PSCA F_ELEM DEP_ELEM (MOTS FX FY FZ MX MY MZ) (MOTS UX UY UZ RX RY RZ);
+            tmp6_S = EXTR tmp6 'VALE' 'SCAL';
+            tmp6_H = T1.'MT'.'INT_loc_H_2';
+            tmp6_Fin = (SOMM(tmp6_S) + tmp6_H);
+            T1.'MT'.'INT_loc_H_2' = tmp6_Fin;
+        FINSI;
+    fin B1;
+    MESS 'Int option 1';
+    INT_W = (T1.'MT'.'INT_loc_H_2');
+    T1.'MT'.'INT_W_2' = INSE T1.'MT'.'INT_W_2' I1 (INT_W);
+    T1.'MT'.'INT_W_H_2' = INT_W;
+    T1.'MT'.'INT_DEP_H_2' = DEPL12;
+SINON;
+    REPE B1 (N1);
+        SI ((&B1) EGA 1);
+            ELEM_P = ELEM_ALL_Sym ELEM (&B1);
+            MOD_ELEM = REDU MOD210 ELEM_P;
+            MAT_ELEM = REDU MAT211 ELEM_P;
+            SIG_ELEM = REDU SIG13 ELEM_P;
+            DEPL_HIS = T1.'MT'.'INT_DEP_H_2';
+            DEP_H_R = REDU DEPL_HIS ELEM_P;
+            DEP_1_R = REDU DEPL12 ELEM_P;
+            DEPL_D = DEPL12 - DEPL_HIS;
+            F_ELEM = BSIGMA MOD_ELEM SIG_ELEM MAT_ELEM;
+            tmp6 = PSCA F_ELEM DEPL_D (MOTS FX FY FZ MX MY MZ) (MOTS UX UY UZ RX RY RZ);
+            tmp6_S = EXTR tmp6 'VALE' 'SCAL';
+            T1.'MT'.'INT_loc_H_2' = (SOMM(tmp6_S));
+        SINON;
+            ELEM_P = ELEM_ALL_Sym ELEM (&B1);
+            MOD_ELEM = REDU MOD210 ELEM_P;
+            MAT_ELEM = REDU MAT211 ELEM_P;
+            SIG_ELEM = REDU SIG13 ELEM_P;
+            DEPL_HIS = T1.'MT'.'INT_DEP_H_2';
+            DEP_H_R = REDU DEPL_HIS ELEM_P;
+            DEP_1_R = REDU DEPL12 ELEM_P;
+            DEPL_D = DEPL12 - DEPL_HIS;
+            F_ELEM = BSIGMA MOD_ELEM SIG_ELEM MAT_ELEM;
+            tmp6 = PSCA F_ELEM DEPL_D (MOTS FX FY FZ MX MY MZ) (MOTS UX UY UZ RX RY RZ);
+            tmp6_S = EXTR tmp6 'VALE' 'SCAL';
+            tmp6_H = T1.'MT'.'INT_loc_H_2';
+            tmp6_Fin = (SOMM(tmp6_S) + tmp6_H);
+            T1.'MT'.'INT_loc_H_2' = tmp6_Fin;
+        FINSI;
+    fin B1;
+    MESS 'Int option 2';
+    tmp6_H = T1.'MT'.'INT_W_H_2';
+    INT_W = (T1.'MT'.'INT_loc_H_2' + tmp6_H);
+    T1.'MT'.'INT_W_2' = INSE T1.'MT'.'INT_W_2' I1 (INT_W);
+    T1.'MT'.'INT_W_H_2' = INT_W;
+    T1.'MT'.'INT_DEP_H_2' = DEPL12;
+FINSI;
+
+
+**computing thee sum of INT Work
+T1.'MT'.'INT_W_F' = T1.'MT'.'INT_W' + T1.'MT'.'INT_W_1' + T1.'MT'.'INT_W_2';
+
+
+
+
+MESS '*****************************';
+MESS 'The internal work is:';
+LIST(INT_W);
+MESS 'The external work is:';
+LIST(tmp5_Fin);
+MESS '*****************************';
+
+
+
+
+
+
+
+
+**Exporting to csv file
+T1.'MT'.'HISTSIZE' = I1;
+MESS 'Writing results ('I1')';
+OPTI 'SORT' 'hist_uni.csv';
+SORT 'EXCE' T1.'MT'.'TIME' T1.'MT'.'UZ1'  T1.'MT'.'CMOD' T1.'MT'.'Force' T1.'MT'.'REAC1' T1.'MT'.'REAC2' T1.'MT'.'UX1' T1.'MT'.'UX2' T1.'MT'.'INT_W_F' T1.'MT'.'EXT_W' T1.'MT'.'KIN_EN'
+'NCOL' 11 'DIGI' 8;
+
+
+
+
+
+*EPSI12 = EPSI DEPL12 MAT101 MODE12; 
+
+*file1 = CHAI 'OUTPUT_' I1 '.vtu';
+*list resu mate12;
+*LDP2 'PARA' MODE12 MATE12 (SIGM12 ET EPSI12 ET VARI12) file1 
+*  (MOTS 'SIGN' 'SIGM' 'PROU' 'SIGL' 'TCOG' 'EPSN' 'EPSM' 'EPSL');
+  
+  
+  
+**************************************************************
+SI (I1 EGA 1);
+	EPSI12 = EPSI DEPL12 MAT101 MODE12; 
+	file1 = CHAI 'OUTPUT_' I1 '.vtu';
+	LDP2 'PARA' MODE12 MATE12 (SIGM12 ET EPSI12 ET VARI12) file1 
+	(MOTS 'SIGN' 'SIGM' 'PROU' 'SIGL' 'TCOG' 'EPSN' 'EPSM' 'EPSL');
+FINSI;
+**************************************************************
+**************************************************************
+SI (I1 EGA 5);
+	EPSI12 = EPSI DEPL12 MAT101 MODE12;
+	file1 = CHAI 'OUTPUT_' I1 '.vtu';
+	LDP2 'PARA' MODE12 MATE12 (SIGM12 ET EPSI12 ET VARI12) file1 
+	(MOTS 'SIGN' 'SIGM' 'PROU' 'SIGL' 'TCOG' 'EPSN' 'EPSM' 'EPSL');
+FINSI;
+**************************************************************
+**************************************************************
+SI (I1 EGA 10);
+	EPSI12 = EPSI DEPL12 MAT101 MODE12;
+	file1 = CHAI 'OUTPUT_' I1 '.vtu';
+	LDP2 'PARA' MODE12 MATE12 (SIGM12 ET EPSI12 ET VARI12) file1 
+	(MOTS 'SIGN' 'SIGM' 'PROU' 'SIGL' 'TCOG' 'EPSN' 'EPSM' 'EPSL');
+FINSI;
+**************************************************************
+**************************************************************
+SI (I1 EGA 15);
+	EPSI12 = EPSI DEPL12 MAT101 MODE12;
+	file1 = CHAI 'OUTPUT_' I1 '.vtu';
+	LDP2 'PARA' MODE12 MATE12 (SIGM12 ET EPSI12 ET VARI12) file1 
+	(MOTS 'SIGN' 'SIGM' 'PROU' 'SIGL' 'TCOG' 'EPSN' 'EPSM' 'EPSL');
+FINSI;
+**************************************************************
+**************************************************************
+SI (I1 EGA 20);
+	EPSI12 = EPSI DEPL12 MAT101 MODE12;
+	file1 = CHAI 'OUTPUT_' I1 '.vtu';
+	LDP2 'PARA' MODE12 MATE12 (SIGM12 ET EPSI12 ET VARI12) file1 
+	(MOTS 'SIGN' 'SIGM' 'PROU' 'SIGL' 'TCOG' 'EPSN' 'EPSM' 'EPSL');
+FINSI;
+**************************************************************
+**************************************************************
+SI (I1 EGA 25);
+	EPSI12 = EPSI DEPL12 MAT101 MODE12;
+	file1 = CHAI 'OUTPUT_' I1 '.vtu';
+	LDP2 'PARA' MODE12 MATE12 (SIGM12 ET EPSI12 ET VARI12) file1 
+	(MOTS 'SIGN' 'SIGM' 'PROU' 'SIGL' 'TCOG' 'EPSN' 'EPSM' 'EPSL');
+FINSI;
+**************************************************************
+**************************************************************
+SI (I1 EGA 30);
+	EPSI12 = EPSI DEPL12 MAT101 MODE12;
+	file1 = CHAI 'OUTPUT_' I1 '.vtu';
+	LDP2 'PARA' MODE12 MATE12 (SIGM12 ET EPSI12 ET VARI12) file1 
+	(MOTS 'SIGN' 'SIGM' 'PROU' 'SIGL' 'TCOG' 'EPSN' 'EPSM' 'EPSL');
+FINSI;
+**************************************************************
+**************************************************************
+SI (I1 EGA 35);
+	EPSI12 = EPSI DEPL12 MAT101 MODE12;
+	file1 = CHAI 'OUTPUT_' I1 '.vtu';
+	LDP2 'PARA' MODE12 MATE12 (SIGM12 ET EPSI12 ET VARI12) file1 
+	(MOTS 'SIGN' 'SIGM' 'PROU' 'SIGL' 'TCOG' 'EPSN' 'EPSM' 'EPSL');
+FINSI;
+**************************************************************
+**************************************************************
+SI (I1 EGA 40);
+	EPSI12 = EPSI DEPL12 MAT101 MODE12;
+	file1 = CHAI 'OUTPUT_' I1 '.vtu';
+	LDP2 'PARA' MODE12 MATE12 (SIGM12 ET EPSI12 ET VARI12) file1 
+	(MOTS 'SIGN' 'SIGM' 'PROU' 'SIGL' 'TCOG' 'EPSN' 'EPSM' 'EPSL');
+FINSI;
+**************************************************************
+**************************************************************
+SI (I1 EGA 45);
+	EPSI12 = EPSI DEPL12 MAT101 MODE12;
+	file1 = CHAI 'OUTPUT_' I1 '.vtu';
+	LDP2 'PARA' MODE12 MATE12 (SIGM12 ET EPSI12 ET VARI12) file1 
+	(MOTS 'SIGN' 'SIGM' 'PROU' 'SIGL' 'TCOG' 'EPSN' 'EPSM' 'EPSL');
+FINSI;
+************************************************************** 
+**************************************************************
+SI (I1 EGA 50);
+	EPSI12 = EPSI DEPL12 MAT101 MODE12;
+	file1 = CHAI 'OUTPUT_' I1 '.vtu';
+	LDP2 'PARA' MODE12 MATE12 (SIGM12 ET EPSI12 ET VARI12) file1 
+	(MOTS 'SIGN' 'SIGM' 'PROU' 'SIGL' 'TCOG' 'EPSN' 'EPSM' 'EPSL');
+FINSI;
+************************************************************** 
+**************************************************************
+SI (I1 EGA 55);
+	EPSI12 = EPSI DEPL12 MAT101 MODE12;
+	file1 = CHAI 'OUTPUT_' I1 '.vtu';
+	LDP2 'PARA' MODE12 MATE12 (SIGM12 ET EPSI12 ET VARI12) file1 
+	(MOTS 'SIGN' 'SIGM' 'PROU' 'SIGL' 'TCOG' 'EPSN' 'EPSM' 'EPSL');
+FINSI;
+************************************************************** 
+**************************************************************
+SI (I1 EGA 60);
+	EPSI12 = EPSI DEPL12 MAT101 MODE12;
+	file1 = CHAI 'OUTPUT_' I1 '.vtu';
+	LDP2 'PARA' MODE12 MATE12 (SIGM12 ET EPSI12 ET VARI12) file1 
+	(MOTS 'SIGN' 'SIGM' 'PROU' 'SIGL' 'TCOG' 'EPSN' 'EPSM' 'EPSL');
+FINSI;
+************************************************************** 
+**************************************************************
+SI (I1 EGA 65);
+	EPSI12 = EPSI DEPL12 MAT101 MODE12;
+	file1 = CHAI 'OUTPUT_' I1 '.vtu';
+	LDP2 'PARA' MODE12 MATE12 (SIGM12 ET EPSI12 ET VARI12) file1 
+	(MOTS 'SIGN' 'SIGM' 'PROU' 'SIGL' 'TCOG' 'EPSN' 'EPSM' 'EPSL');
+FINSI;
+************************************************************** 
+**************************************************************
+SI (I1 EGA 75);
+	EPSI12 = EPSI DEPL12 MAT101 MODE12;
+	file1 = CHAI 'OUTPUT_' I1 '.vtu';
+	LDP2 'PARA' MODE12 MATE12 (SIGM12 ET EPSI12 ET VARI12) file1 
+	(MOTS 'SIGN' 'SIGM' 'PROU' 'SIGL' 'TCOG' 'EPSN' 'EPSM' 'EPSL');
+FINSI;
+************************************************************** 
+**************************************************************
+SI (I1 EGA 85);
+	EPSI12 = EPSI DEPL12 MAT101 MODE12;
+	file1 = CHAI 'OUTPUT_' I1 '.vtu';
+	LDP2 'PARA' MODE12 MATE12 (SIGM12 ET EPSI12 ET VARI12) file1 
+	(MOTS 'SIGN' 'SIGM' 'PROU' 'SIGL' 'TCOG' 'EPSN' 'EPSM' 'EPSL');
+FINSI;
+************************************************************** 
+**************************************************************
+SI (I1 EGA 95);
+	EPSI12 = EPSI DEPL12 MAT101 MODE12;
+	file1 = CHAI 'OUTPUT_' I1 '.vtu';
+	LDP2 'PARA' MODE12 MATE12 (SIGM12 ET EPSI12 ET VARI12) file1 
+	(MOTS 'SIGN' 'SIGM' 'PROU' 'SIGL' 'TCOG' 'EPSN' 'EPSM' 'EPSL');
+FINSI;
+************************************************************** 
+
+
+
+
+**file2 = CHAI 'Displacement' I1 ;
+**MESS 'Displacement results ('I1')';
+**OPTI 'SORT' file2;
+**SORT 'AVS' DEPL12;
+
+
+****NEW
+**mot11 = CHAI 'CRACKS_' I1;
+****LDP1 mot11 mai100 MATE12 EPSI12 DEPL12 INPUTGEO 'EPSN' -10000000000; 
+**LDP1 mot11 mai100 T1.CARACTERISTIQUES VARI12 DEPL12 INPUTGEO 'TCOG' 0.0001;
+
+**NEW julien
+**mot11 = CHAI 'CRACKS_' I1;
+**DEPL12_LD = REDU T1.CONTINUATION.DEPLACEMENTS MAI100;
+**VARI12_LD = REDU T1.CONTINUATION.VARIABLES_INTERNES MAI100;
+**LDP1 mot11 mai100 T1.CARACTERISTIQUES VARI12_LD DEPL12_LD INPUTGEO 'TCOG' 0.0001;
+
+
+
+
+**tmp_I = ENTI I1/25.;
+**rest = I1/25. - tmp_I;
+**SI (rest EGA 0);
+**	TRAC DEPL12 ALL_MESH;
+**FINSI;
+
+FINP;
+
+ENT_TEM1 = TEMPS 'CPU';
+LIST(ENT_TEM1);
+
+PASAPAS TO;
+
+ENT_TEM2 = TEMPS 'CPU';
+LIST(ENT_TEM2);
+
+fin;
