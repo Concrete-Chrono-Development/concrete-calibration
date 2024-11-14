@@ -1,0 +1,1 @@
+The input files are under [benchmarks](https://github.com/tianjuxue/jax-ldpm/tree/main/benchmarks) in the [JAX-LDPM](https://github.com/tianjuxue/jax-ldpm/tree/main) repository.
